@@ -8,6 +8,11 @@ import com.example.videodemo.data.IVideoDao
 import com.example.videodemo.data.VideoFile
 import com.example.videodemo.data.VideoX
 import com.example.videodemo.util.DataTypeConverter
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
+
 
 @Database(entities = [VideoX ::class],version = 1)
 @TypeConverters(DataTypeConverter::class)

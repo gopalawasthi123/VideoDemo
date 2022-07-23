@@ -72,10 +72,8 @@ class VideoMainFragment : Fragment() {
 
     private fun initializePlayer(videoMainFragment: VideoMainFragment) {
         simpleExoplayer = SimpleExoPlayer.Builder(videoMainFragment.requireContext()).build()
-
         sharedViewModel.videoData.observe(viewLifecycleOwner){
             preparePlayer(it)
-
         }
 
         fragmentVideoMainBinding?.exoplayerView?.player = simpleExoplayer
@@ -92,7 +90,6 @@ class VideoMainFragment : Fragment() {
     }
 
     private fun releasePlayer() {
-        playbackPosition = simpleExoplayer.currentPosition.toInt()
         simpleExoplayer.release()
     }
 
@@ -101,6 +98,11 @@ class VideoMainFragment : Fragment() {
         val dataSourceFactory: DataSource.Factory = DefaultHttpDataSource.Factory()
         return ProgressiveMediaSource.Factory(dataSourceFactory)
             .createMediaSource(MediaItem.fromUri(uri))
+    }
+
+    override fun onStop() {
+        super.onStop()
+        releasePlayer()
     }
 
 

@@ -15,7 +15,7 @@ class DataTypeConverter {
 
     @TypeConverter
     fun toJsonString(list : List<VideoFile>): String{
-        val type = object :TypeToken<String>(){}.type
+        val type = object :TypeToken<List<VideoFile>>(){}.type
         return Gson().toJson(list,type)
     }
 }

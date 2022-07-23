@@ -10,8 +10,9 @@ import com.bumptech.glide.Glide
 import com.example.videodemo.R
 import com.example.videodemo.data.VideoX
 import com.example.videodemo.databinding.TopVideoItemBinding
+import com.example.videodemo.ui.listeners.ClickListener
 
-class VideoTopAdapter : ListAdapter<VideoX,VideoTopAdapter.VideoTopViewHolder>(VIDEOS_COMPARATOR) {
+class VideoTopAdapter(private val listener : ClickListener) : ListAdapter<VideoX,VideoTopAdapter.VideoTopViewHolder>(VIDEOS_COMPARATOR) {
 
     class VideoTopViewHolder(private val topVideoItemBinding: TopVideoItemBinding): RecyclerView.ViewHolder(topVideoItemBinding.root){
         fun binds(videoX: VideoX?){
@@ -23,7 +24,11 @@ class VideoTopAdapter : ListAdapter<VideoX,VideoTopAdapter.VideoTopViewHolder>(V
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VideoTopViewHolder {
         val binding = TopVideoItemBinding.inflate(LayoutInflater.from(parent.context),parent,false)
-        return VideoTopViewHolder(binding)
+        val holder =VideoTopViewHolder(binding)
+        binding.imageVideo.setOnClickListener{
+            listener.videoItemClicked(position =holder.absoluteAdapterPosition )
+        }
+        return holder
     }
 
     override fun onBindViewHolder(holder: VideoTopViewHolder, position: Int) {

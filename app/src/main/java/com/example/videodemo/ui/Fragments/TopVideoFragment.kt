@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.videodemo.databinding.FragmentTopVideoBinding
 import com.example.videodemo.ui.SharedViewModel
 import com.example.videodemo.ui.adapters.VideoTopAdapter
+import com.example.videodemo.ui.listeners.ClickListener
 import dagger.hilt.android.AndroidEntryPoint
 
 
@@ -21,7 +22,7 @@ import dagger.hilt.android.AndroidEntryPoint
  * create an instance of this fragment.
  */
 @AndroidEntryPoint
-class TopVideoFragment : Fragment() {
+class TopVideoFragment : Fragment() ,ClickListener{
     private val sharedViewModel : SharedViewModel by activityViewModels()
     private lateinit var adapter : VideoTopAdapter
 
@@ -32,7 +33,7 @@ class TopVideoFragment : Fragment() {
         // Inflate the layout for this fragment
         val topVideoBinding = FragmentTopVideoBinding.inflate(layoutInflater, container, false)
 
-        adapter = VideoTopAdapter()
+        adapter = VideoTopAdapter(this)
         topVideoBinding.recyclerTopView.layoutManager = LinearLayoutManager(context,LinearLayoutManager.HORIZONTAL,false)
         topVideoBinding.recyclerTopView.adapter = adapter
 
@@ -51,4 +52,11 @@ class TopVideoFragment : Fragment() {
         sharedViewModel.getVideosFromVideoRepo()
 
     }
+
+    override fun videoItemClicked(position: Int) {
+       val item = adapter.currentList?.get(position)
+        if(item != null)
+        sharedViewModel.getVideoData(position)
+    }
+
 }
