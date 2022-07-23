@@ -1,7 +1,8 @@
 package com.example.videodemo.data
 
-import androidx.room.Entity
-import androidx.room.PrimaryKey
+import androidx.room.*
+import com.example.videodemo.util.DataTypeConverter
+import java.io.Serializable
 
 @Entity
 data class VideoX(
@@ -12,5 +13,7 @@ data class VideoX(
     val image: String?,
     val url: String?,
     val width: Int?,
+    @TypeConverters(DataTypeConverter::class)
+    val video_files: List<VideoFile>?,
     val watchDuration : Int?,
 )

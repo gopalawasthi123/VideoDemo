@@ -1,5 +1,9 @@
 package com.example.videodemo.data
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+import java.io.Serializable
+
 data class VideoFile(
     val file_type: String?,
     val height: Int?,

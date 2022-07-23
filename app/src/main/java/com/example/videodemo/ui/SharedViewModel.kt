@@ -33,7 +33,7 @@ class SharedViewModel @Inject constructor(private val videoRepo: VideoRepo): Vie
 
     fun getVideoData(index : Int =0){
         var item = _mutableVideoList.value?.get(index)
-        _mutableVideoData.postValue(item?.url)
+        _mutableVideoData.postValue(item?.video_files!![index].link)
 
     }
 
