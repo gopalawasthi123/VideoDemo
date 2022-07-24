@@ -17,9 +17,6 @@ data class VideoX(
     @TypeConverters(DataTypeConverter::class)
     val video_files: List<VideoFile>?,
     val watchDuration : Int?,
+    var videoProgress : Int = 0
 
-
-){
-    @Ignore
-     var videoProgress : Int = 0
-}
+)

@@ -42,13 +42,13 @@ class TopVideoFragment : Fragment() ,ClickListener{
 
         sharedViewModel.videoList.observe(viewLifecycleOwner){ video ->
             adapter.submitList(video)
-            sharedViewModel.getVideoData(0)
+            sharedViewModel.getVideoData(adapter.getAdapterViewClickedPosition())
         }
 
 
         lifecycleScope.launchWhenStarted {
            sharedViewModel._mutableProgress.observe(viewLifecycleOwner){
-               adapter.updateProgress(it,0)
+               adapter.updateProgress(it,adapter.getAdapterViewClickedPosition())
            }
         }
 

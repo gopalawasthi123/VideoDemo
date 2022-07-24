@@ -18,13 +18,14 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class VideoTopAdapter(private val listener : ClickListener) : ListAdapter<VideoX,VideoTopAdapter.VideoTopViewHolder>(VIDEOS_COMPARATOR) {
-
+    private var adapterClickPosition = 0
 
     class VideoTopViewHolder(private val topVideoItemBinding: TopVideoItemBinding): RecyclerView.ViewHolder(topVideoItemBinding.root){
         fun binds(videoX: VideoX?){
             Glide.with(topVideoItemBinding.root).load(videoX?.image)
                 .placeholder(R.drawable.ic_launcher_background)
                 .into(topVideoItemBinding.imageVideo)
+            topVideoItemBinding.circularProgress.progress = videoX?.videoProgress!!
         }
 
         fun updateProgress(progress : Int){
@@ -37,6 +38,7 @@ class VideoTopAdapter(private val listener : ClickListener) : ListAdapter<VideoX
         val holder =VideoTopViewHolder(binding)
         binding.imageVideo.setOnClickListener{
             listener.videoItemClicked(position =holder.absoluteAdapterPosition )
+            adapterClickPosition = holder.absoluteAdapterPosition
         }
         return holder
     }
@@ -61,8 +63,12 @@ class VideoTopAdapter(private val listener : ClickListener) : ListAdapter<VideoX
         }
     }
 
+    fun getAdapterViewClickedPosition(): Int{
+        return adapterClickPosition
+    }
+
     fun updateProgress(duration : Int, position :Int){
-       var item = getItem(position)
+       val item = getItem(position)
         item.videoProgress = duration
         notifyItemChanged(position,true)
     }
@@ -77,9 +83,6 @@ class VideoTopAdapter(private val listener : ClickListener) : ListAdapter<VideoX
                 return oldItem == newItem
             }
 
-            override fun getChangePayload(oldItem: VideoX, newItem: VideoX): Any? {
-                return if(oldItem.videoProgress != newItem.videoProgress) true else null
-            }
         }
     }
 
