@@ -20,7 +20,7 @@
 
         <com.google.android.material.progressindicator.CircularProgressIndicator
             android:id="@+id/circular_progress"
-            android:progress="1"
+            android:progress="0"
             app:indicatorSize="80dp"
             android:visibility="visible"
             android:indeterminate="false"
