@@ -1,8 +1,10 @@
 package com.example.videodemo.ui.Fragments
 
+import android.graphics.SurfaceTexture
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.TextureView
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
@@ -10,6 +12,7 @@ import androidx.fragment.app.activityViewModels
 import com.example.videodemo.databinding.FragmentVideoMainBinding
 import com.example.videodemo.ui.SharedViewModel
 import com.google.android.exoplayer2.MediaItem
+import com.google.android.exoplayer2.PlaybackException
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.source.MediaSource
@@ -65,6 +68,11 @@ class VideoMainFragment : Fragment() {
                 else if(playbackState == Player.STATE_READY){
                     fragmentVideoMainBinding?.progressBar?.visibility = View.GONE
                 }
+
+            }
+
+            override fun onPlayerError(error: PlaybackException) {
+                super.onPlayerError(error)
             }
         })
     }
@@ -75,10 +83,9 @@ class VideoMainFragment : Fragment() {
         sharedViewModel.videoData.observe(viewLifecycleOwner){
             preparePlayer(it)
         }
-
-        fragmentVideoMainBinding?.exoplayerView?.player = simpleExoplayer
           simpleExoplayer.seekTo(playbackPosition.toLong())
         simpleExoplayer.playWhenReady = true
+        fragmentVideoMainBinding?.exoplayerView?.player = simpleExoplayer
     }
 
 
@@ -90,6 +97,7 @@ class VideoMainFragment : Fragment() {
     }
 
     private fun releasePlayer() {
+        fragmentVideoMainBinding?.exoplayerView?.player = null
         simpleExoplayer.release()
     }
 
@@ -104,7 +112,6 @@ class VideoMainFragment : Fragment() {
         super.onStop()
         releasePlayer()
     }
-
 
 
 }
