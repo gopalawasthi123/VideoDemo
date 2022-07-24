@@ -7,6 +7,10 @@ import androidx.lifecycle.viewModelScope
 import com.example.videodemo.data.VideoX
 import com.example.videodemo.repo.VideoRepo
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -21,6 +25,9 @@ class SharedViewModel @Inject constructor(private val videoRepo: VideoRepo): Vie
 
     val videoData : LiveData<String?> = _mutableVideoData
 
+     var _mutableProgress = MutableLiveData<Int>()
+
+    //val videoProgress : LiveData<Int> = _mutableProgress
 
 
     fun getVideosFromVideoRepo(){

@@ -1,12 +1,15 @@
 package com.example.videodemo.ui.Fragments
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.videodemo.databinding.FragmentTopVideoBinding
@@ -42,6 +45,12 @@ class TopVideoFragment : Fragment() ,ClickListener{
             sharedViewModel.getVideoData(0)
         }
 
+
+        lifecycleScope.launchWhenStarted {
+           sharedViewModel._mutableProgress.observe(viewLifecycleOwner){
+               adapter.updateProgress(it,0)
+           }
+        }
 
 
         return topVideoBinding.root

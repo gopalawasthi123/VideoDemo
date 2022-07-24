@@ -3,12 +3,18 @@ package com.example.videodemo.ui.Fragments
 import android.graphics.SurfaceTexture
 import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.TextureView
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.FloatRange
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.liveData
 import com.example.videodemo.databinding.FragmentVideoMainBinding
 import com.example.videodemo.ui.SharedViewModel
 import com.google.android.exoplayer2.MediaItem
@@ -20,6 +26,10 @@ import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.upstream.DataSource
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSource
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.*
+import kotlin.math.absoluteValue
 
 
 /**
@@ -67,9 +77,27 @@ class VideoMainFragment : Fragment() {
                 }
                 else if(playbackState == Player.STATE_READY){
                     fragmentVideoMainBinding?.progressBar?.visibility = View.GONE
+                   lifecycleScope.launchWhenStarted {
+                       getSeekBarPosition().observe(viewLifecycleOwner){
+                           sharedViewModel._mutableProgress.value = it
+                       }
+
+                   }
+
                 }
 
             }
+
+            override fun onPositionDiscontinuity(
+                oldPosition: Player.PositionInfo,
+                newPosition: Player.PositionInfo,
+                reason: Int
+            ) {
+                super.onPositionDiscontinuity(oldPosition, newPosition, reason)
+
+            }
+
+
 
             override fun onPlayerError(error: PlaybackException) {
                 super.onPlayerError(error)
@@ -77,6 +105,16 @@ class VideoMainFragment : Fragment() {
         })
     }
 
+    private fun getSeekBarPosition() = liveData<Int> {
+        while (true){
+            val minDuration = 0.0f
+            val currentpos: Int = (simpleExoplayer.currentPosition/1000).toInt()
+            val maxDuration :Int = (simpleExoplayer.duration/1000).toInt()
+            var durationPlayed = ((currentpos - minDuration)*100) /(maxDuration - minDuration)
+            emit(durationPlayed.toInt())
+            delay(1000L)
+        }
+    }
 
     private fun initializePlayer(videoMainFragment: VideoMainFragment) {
         simpleExoplayer = SimpleExoPlayer.Builder(videoMainFragment.requireContext()).build()
