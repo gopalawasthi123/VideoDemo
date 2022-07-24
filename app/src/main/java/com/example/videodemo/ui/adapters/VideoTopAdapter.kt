@@ -1,5 +1,6 @@
 package com.example.videodemo.ui.adapters
 
+import android.os.Build
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ListView
@@ -11,6 +12,7 @@ import com.example.videodemo.R
 import com.example.videodemo.data.VideoX
 import com.example.videodemo.databinding.TopVideoItemBinding
 import com.example.videodemo.ui.listeners.ClickListener
+import com.example.videodemo.util.loadImage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
@@ -22,14 +24,17 @@ class VideoTopAdapter(private val listener : ClickListener) : ListAdapter<VideoX
 
     class VideoTopViewHolder(private val topVideoItemBinding: TopVideoItemBinding): RecyclerView.ViewHolder(topVideoItemBinding.root){
         fun binds(videoX: VideoX?){
-            Glide.with(topVideoItemBinding.root).load(videoX?.image)
-                .placeholder(R.drawable.ic_launcher_background)
-                .into(topVideoItemBinding.imageVideo)
-            topVideoItemBinding.circularProgress.progress = videoX?.videoProgress!!
+            topVideoItemBinding.imageVideo.loadImage(videoX?.image!!)
+            topVideoItemBinding.circularProgress.progress = videoX.videoProgress!!
         }
 
         fun updateProgress(progress : Int){
-            topVideoItemBinding.circularProgress.progress = progress
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                topVideoItemBinding.circularProgress.setProgress(progress,true)
+            }
+            else{
+                topVideoItemBinding.circularProgress.progress = progress
+            }
         }
     }
 

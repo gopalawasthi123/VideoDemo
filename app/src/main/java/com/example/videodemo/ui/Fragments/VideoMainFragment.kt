@@ -17,6 +17,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.liveData
 import com.example.videodemo.databinding.FragmentVideoMainBinding
 import com.example.videodemo.ui.SharedViewModel
+import com.example.videodemo.util.setVisibility
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.PlaybackException
 import com.google.android.exoplayer2.Player
@@ -70,18 +71,17 @@ class VideoMainFragment : Fragment() {
 
                 }
                 else if(playbackState == Player.STATE_BUFFERING){
-                    fragmentVideoMainBinding?.progressBar?.visibility = View.VISIBLE
+                    fragmentVideoMainBinding?.progressBar?.setVisibility(true)
                 }
                 else if(playbackState == Player.STATE_ENDED){
-                    fragmentVideoMainBinding?.progressBar?.visibility = View.GONE
+                    fragmentVideoMainBinding?.progressBar?.setVisibility(false)
                 }
                 else if(playbackState == Player.STATE_READY){
-                    fragmentVideoMainBinding?.progressBar?.visibility = View.GONE
+                    fragmentVideoMainBinding?.progressBar?.setVisibility(false)
                    lifecycleScope.launchWhenStarted {
                        getSeekBarPosition().observe(viewLifecycleOwner){
                            sharedViewModel._mutableProgress.value = it
                        }
-
                    }
 
                 }

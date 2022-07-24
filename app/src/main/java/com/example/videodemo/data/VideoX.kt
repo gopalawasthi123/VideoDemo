@@ -18,5 +18,4 @@ data class VideoX(
     val video_files: List<VideoFile>?,
     val watchDuration : Int?,
     var videoProgress : Int = 0
-
 )
