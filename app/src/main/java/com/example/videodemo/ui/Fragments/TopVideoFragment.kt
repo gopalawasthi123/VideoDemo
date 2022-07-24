@@ -47,12 +47,10 @@ class TopVideoFragment : Fragment() ,ClickListener{
 
 
         lifecycleScope.launchWhenStarted {
-           sharedViewModel._mutableProgress.observe(viewLifecycleOwner){
-               adapter.updateProgress(it,adapter.getAdapterViewClickedPosition())
-           }
+                sharedViewModel._mutableProgress.observe(viewLifecycleOwner){
+                    adapter.updateProgress(it,adapter.getAdapterViewClickedPosition())
+                }
         }
-
-
         return topVideoBinding.root
     }
 

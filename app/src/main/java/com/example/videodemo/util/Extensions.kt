@@ -1,11 +1,6 @@
 package com.example.videodemo.util
-
 import android.view.View
-import android.widget.ImageView
 import com.bumptech.glide.Glide
-import com.example.videodemo.R
-
-
 
 fun com.google.android.material.imageview.ShapeableImageView.loadImage(imageUrl: String){
         Glide.with(this)
