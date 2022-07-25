@@ -23,6 +23,12 @@ class SharedViewModel @Inject constructor(private val videoRepo: VideoRepo): Vie
 
      var _mutableProgress = MutableLiveData<Int>()
 
+    private var _currentVideoPlayingId = MutableLiveData<Int>()
+
+    private var _mutableVideoWatchProgress = MutableLiveData<Int>()
+
+    val videoWatchProgress : LiveData<Int> = _mutableVideoWatchProgress
+
     fun getVideosFromVideoRepo(){
         viewModelScope.launch {
             val resp = videoRepo.getPopularVideos().let {
@@ -32,19 +38,24 @@ class SharedViewModel @Inject constructor(private val videoRepo: VideoRepo): Vie
     }
 
     fun getVideoData(index : Int =0){
-       var videoX : VideoX? = null
         viewModelScope.launch {
-            videoX = videoList.value?.get(index)
+            var videoX = videoList.value?.get(index)
+            _currentVideoPlayingId.postValue(videoX?.id!!)
             videoX?.numTimesVideoWatched = videoX?.numTimesVideoWatched?.plus(1)!!
             videoRepo.updateData(videoX!!)
             _mutableVideoData.postValue(videoX?.video_files!![2].link)
+            _mutableVideoWatchProgress.postValue(videoX.videoProgress)
         }
-
     }
 
-    suspend fun updateVideoItemData(videoX: VideoX) {
-        videoX.numTimesVideoWatched = videoX.numTimesVideoWatched.plus(1)
-        videoRepo.updateData(videoX)
+
+
+     fun updateVideoItem(watchPercentage : Int){
+        viewModelScope.launch {
+           var videoX : VideoX?= _currentVideoPlayingId.value?.let { videoRepo.getVideoById(it) }
+            videoX?.videoProgress = watchPercentage
+            videoRepo.updateData(videoX!!)
+        }
     }
 
 }

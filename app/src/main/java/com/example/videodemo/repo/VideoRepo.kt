@@ -28,4 +28,9 @@ class VideoRepo @Inject constructor(private val videoService: IVideoService,priv
         videoDao.updateVideo(videoX)
     }
 
+    suspend fun getVideoById(id :Int) : VideoX{
+      var videoX = videoDao.getVideoById(id)
+        return videoX
+    }
+
 }

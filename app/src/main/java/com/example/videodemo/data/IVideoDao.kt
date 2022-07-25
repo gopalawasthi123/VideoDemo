@@ -13,4 +13,8 @@ interface IVideoDao {
 
     @Update(onConflict = OnConflictStrategy.REPLACE)
     suspend fun updateVideo(videoX: VideoX)
+
+    @Query("Select * from videox where id = :id")
+    suspend fun getVideoById(id:Int) : VideoX
+
 }
