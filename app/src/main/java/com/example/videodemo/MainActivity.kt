@@ -35,8 +35,8 @@ class MainActivity : AppCompatActivity() {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                 window.decorView.windowInsetsController?.hide(WindowInsets.Type.statusBars())
             }
-            else{
-                actionBar?.hide()
+            else if(Build.VERSION.SDK_INT < Build.VERSION_CODES.R){
+                window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
             }
         }
         else if(newConfig.orientation == Configuration.ORIENTATION_PORTRAIT){
@@ -44,8 +44,8 @@ class MainActivity : AppCompatActivity() {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                 window.decorView.windowInsetsController?.show(WindowInsets.Type.statusBars())
             }
-            else{
-                actionBar?.show()
+            else if(Build.VERSION.SDK_INT < Build.VERSION_CODES.R){
+                window.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
             }
 
         }

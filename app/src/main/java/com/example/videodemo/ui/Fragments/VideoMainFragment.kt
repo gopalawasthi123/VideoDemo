@@ -103,8 +103,8 @@ class VideoMainFragment : Fragment() {
                eventTime: AnalyticsListener.EventTime,
                playbackStats: PlaybackStats,
            ) {
-               var watchPercentage : Int = (playbackStats.totalPlayTimeMs /1000).toInt()
-               sharedViewModel.updateVideoItem(watchPercentage)
+             //  var watchPercentage : Long = (playbackStats.totalPlayTimeMs - playbackStats.totalWaitTimeMs)/1000
+              // sharedViewModel.updateVideoItem(watchPercentage.toInt())
            }
 
        }))
