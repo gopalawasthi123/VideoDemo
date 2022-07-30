@@ -2,15 +2,11 @@ package com.example.videodemo.ui.Fragments
 
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
-import android.view.TextureView
 import android.view.View
 import android.view.ViewGroup
-import androidx.annotation.FloatRange
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.liveData
 import com.example.videodemo.databinding.FragmentVideoMainBinding
@@ -20,17 +16,14 @@ import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.analytics.AnalyticsListener
 import com.google.android.exoplayer2.analytics.PlaybackStats
 import com.google.android.exoplayer2.analytics.PlaybackStatsListener
+import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory
 import com.google.android.exoplayer2.source.MediaSource
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
-import com.google.android.exoplayer2.source.TrackGroupArray
-import com.google.android.exoplayer2.trackselection.TrackSelectionArray
 import com.google.android.exoplayer2.upstream.DataSource
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSource
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
-import kotlin.math.absoluteValue
 
 
 /**
@@ -76,21 +69,31 @@ class VideoMainFragment : Fragment() {
                 else if(playbackState == Player.STATE_BUFFERING){
                     fragmentVideoMainBinding?.progressBar?.setVisibility(true)
                 }
-                else if(playbackState == Player.STATE_ENDED){
+                else if(playbackState == Player.STATE_ENDED) {
                     fragmentVideoMainBinding?.progressBar?.setVisibility(false)
-                    fragmentVideoMainBinding?.videoWatched?.text = (playTime/1000).toString()
+                    fragmentVideoMainBinding?.videoWatched?.text = (playTime / 1000).toString()
                 }
+
                 else if(playbackState == Player.STATE_READY){
+
                     fragmentVideoMainBinding?.progressBar?.setVisibility(false)
+
+                    lifecycleScope.launchWhenStarted {
+                        val currentVideo = sharedViewModel.videoData?.value
+                        currentVideo?.let {
+                            it.id?.let { it1 -> sharedViewModel.updateVideoById(it1) }
+                        }
+                    }
+
                    lifecycleScope.launchWhenStarted {
                        getSeekBarPosition().observe(viewLifecycleOwner){
                            sharedViewModel._mutableProgress.value = it
-
                        }
                    }
-                }
-            }
 
+                }
+
+            }
 
             override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
                 super.onMediaItemTransition(mediaItem, reason)
@@ -103,15 +106,13 @@ class VideoMainFragment : Fragment() {
                eventTime: AnalyticsListener.EventTime,
                playbackStats: PlaybackStats,
            ) {
-             //  var watchPercentage : Long = (playbackStats.totalPlayTimeMs - playbackStats.totalWaitTimeMs)/1000
-              // sharedViewModel.updateVideoItem(watchPercentage.toInt())
+//               var watchPercentage : Long = (playbackStats.totalPlayTimeMs - playbackStats.totalWaitTimeMs)/1000
+//               sharedViewModel.updateVideoItem(watchPercentage.toInt())
            }
 
        }))
 
     }
-
-
     private fun getSeekBarPosition() = liveData<Int> {
         while (true){
             val minDuration = 0.0f
@@ -132,12 +133,16 @@ class VideoMainFragment : Fragment() {
             if(simpleExoplayer.isPlaying){
              //   fragmentVideoMainBinding?.videoWatched?.text = calculatePercentageVideoWatched(simpleExoplayer.currentPosition,0).toString()
             }
-            preparePlayer(it)
+            it?.let {
+                preparePlayer(it.video_files?.get(2)?.link)
+            }
+
         }
         sharedViewModel.videoWatchProgress.observe(viewLifecycleOwner){
             fragmentVideoMainBinding?.videoWatched?.text = it.toString()
         }
-          simpleExoplayer.seekTo(playbackPosition.toLong())
+
+
         simpleExoplayer.playWhenReady = true
         fragmentVideoMainBinding?.exoplayerView?.player = simpleExoplayer
     }

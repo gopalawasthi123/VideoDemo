@@ -9,11 +9,17 @@ import android.view.WindowInsets
 import android.view.WindowManager
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
+import androidx.fragment.app.FragmentManager
+import androidx.lifecycle.lifecycleScope
 import com.example.videodemo.databinding.ActivityMainBinding
 import com.example.videodemo.databinding.FragmentVideoMainBinding
 import com.example.videodemo.ui.SharedViewModel
 import com.example.videodemo.util.setVisibility
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -25,6 +31,7 @@ class MainActivity : AppCompatActivity() {
         fragmentVideoMainBinding = binding
         val rootView = binding.root
         setContentView(rootView)
+
     }
 
 

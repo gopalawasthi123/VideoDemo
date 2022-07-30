@@ -1,5 +1,6 @@
 package com.example.videodemo.ui
 
+import android.provider.MediaStore
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -7,6 +8,8 @@ import androidx.lifecycle.viewModelScope
 import com.example.videodemo.data.VideoX
 import com.example.videodemo.repo.VideoRepo
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -17,13 +20,11 @@ class SharedViewModel @Inject constructor(private val videoRepo: VideoRepo): Vie
 
     val videoList : LiveData<List<VideoX>> = _mutableVideoList
 
-    private var _mutableVideoData = MutableLiveData<String?>()
+    private var _mutableVideoData = MutableLiveData<VideoX?>()
 
-    val videoData : LiveData<String?> = _mutableVideoData
+    val videoData : LiveData<VideoX?> = _mutableVideoData
 
      var _mutableProgress = MutableLiveData<Int>()
-
-    private var _currentVideoPlayingId = MutableLiveData<Int>()
 
     private var _mutableVideoWatchProgress = MutableLiveData<Int>()
 
@@ -40,22 +41,22 @@ class SharedViewModel @Inject constructor(private val videoRepo: VideoRepo): Vie
     fun getVideoData(index : Int =0){
         viewModelScope.launch {
             var videoX = videoList.value?.get(index)
-            _currentVideoPlayingId.postValue(videoX?.id!!)
-            videoX?.numTimesVideoWatched = videoX?.numTimesVideoWatched?.plus(1)!!
-            videoRepo.updateData(videoX!!)
-            _mutableVideoData.postValue(videoX?.video_files!![2].link)
-            _mutableVideoWatchProgress.postValue(videoX.videoProgress)
+            videoX?.let {
+                videoRepo.updateData(videoX)
+                _mutableVideoData.postValue(videoX)
+                _mutableVideoWatchProgress.postValue(videoX.videoProgress)
+            }
+
         }
     }
 
 
-
-     fun updateVideoItem(watchPercentage : Int){
-        viewModelScope.launch {
-           var videoX : VideoX?= _currentVideoPlayingId.value?.let { videoRepo.getVideoById(it) }
-            videoX?.videoProgress = watchPercentage
-            videoRepo.updateData(videoX!!)
-        }
+   suspend fun updateVideoById(id: Int){
+      val videItem = videoRepo.getVideoById(id)
+       videItem.numTimesVideoWatched = videItem.numTimesVideoWatched.plus(1)
+       videoRepo.updateData(videItem)
     }
+
+
 
 }
